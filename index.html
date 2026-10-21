@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CYBERLIFE // 赛博人生模拟器</title>
+<style>
+:root{--bg:#070b12;--panel:#101826;--panel2:#151f30;--line:#24344a;--cyan:#5df6e5;--pink:#ff5fa2;--gold:#ffd166;--muted:#8fa3bb;--text:#e8f0ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% 0%,#15233a 0,#070b12 55%);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,select{font:inherit}button{cursor:pointer;border:1px solid #31516a;background:#14283a;color:var(--cyan);padding:9px 12px;border-radius:9px;transition:.15s}button:hover{background:#1d3b50;transform:translateY(-1px)}button:disabled{opacity:.4;cursor:not-allowed}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line);gap:16px;flex-wrap:wrap;background:#080e18c9;position:sticky;top:0;z-index:3;backdrop-filter:blur(12px)}
+.brand{font-weight:900;letter-spacing:.18em;font-size:18px}.brand span{color:var(--cyan)}.sub{color:var(--muted);font-size:12px;letter-spacing:.08em}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#111b29;border:1px solid var(--line);border-radius:10px;padding:7px 12px;min-width:88px}.stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em}.stat strong{font-size:17px}
+main{max-width:1450px;margin:auto;padding:22px;display:grid;grid-template-columns:1.15fr 1fr .88fr;gap:18px}.panel{background:linear-gradient(160deg,#111b29ed,#0b121dee);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 15px 45px #0002}.panelhead{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.panelhead h2{font-size:13px;margin:0;letter-spacing:.14em;text-transform:uppercase}.tag{font-size:10px;color:var(--cyan);border:1px solid #285f60;border-radius:5px;padding:3px 6px}.inner{padding:15px}
+.city{min-height:260px;position:relative;background:linear-gradient(180deg,#101c2a,#0a111b);overflow:hidden}
+.city:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#26405a33 1px,transparent 1px),linear-gradient(90deg,#26405a33 1px,transparent 1px);background-size:28px 28px;transform:perspective(260px) rotateX(8deg) scale(1.25);transform-origin:bottom}
+.skyline{position:absolute;bottom:0;left:0;right:0;height:80%;display:flex;align-items:end;justify-content:space-around;gap:7px;padding:0 18px}
+.building{position:relative;width:15%;border:1px solid #28506b;background:linear-gradient(90deg,#132b3c,#0b1727);box-shadow:0 0 20px #00e6ff0c}
+.building:after{content:"";position:absolute;inset:9px 6px;background:repeating-linear-gradient(0deg,transparent 0 11px,#5df6e522 12px 14px),repeating-linear-gradient(90deg,transparent 0 8px,#5df6e522 9px 10px)}
+.neon{position:absolute;z-index:1;left:16px;top:14px;font-weight:900;color:var(--pink);font-size:11px;letter-spacing:.15em;text-shadow:0 0 12px #ff5fa288}.districts{position:absolute;z-index:2;left:14px;right:14px;bottom:12px;display:flex;gap:6px;flex-wrap:wrap}.district{font-size:10px;background:#09111de8;border:1px solid #2b435a;padding:4px 7px;border-radius:5px;color:#b7c9df}
+.npcs{display:grid;gap:9px}.npc{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid #26364a;background:#111b29;border-radius:11px}.avatar{width:42px;height:42px;display:grid;place-items:center;background:#1a2a3c;border:1px solid #38546b;border-radius:11px;font-size:21px}.npc h3{margin:0;font-size:13px}.npc p{margin:2px 0;color:var(--muted);font-size:11px}.money{font-weight:800;color:var(--gold);font-size:12px}.meter{height:4px;background:#243247;border-radius:5px;margin-top:6px;overflow:hidden}.meter span{display:block;height:100%;background:var(--cyan)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions button{text-align:left;min-height:64px}.actions b{display:block;font-size:12px;color:var(--text);margin-bottom:3px}.actions small{display:block;color:var(--muted);font-size:10px}
+.feed{display:grid;gap:8px;max-height:380px;overflow:auto}.event{border-left:2px solid var(--cyan);padding:8px 10px;background:#101a27;border-radius:0 8px 8px 0;font-size:12px}.event.chaos{border-color:var(--pink)}.event small{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+.footerbar{display:flex;gap:8px;flex-wrap:wrap;padding:0 15px 15px}.hint{font-size:11px;color:var(--muted);padding:10px 15px;border-top:1px solid var(--line)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#142a3b;border:1px solid var(--cyan);padding:10px 16px;border-radius:10px;z-index:9;box-shadow:0 8px 30px #0008;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+@media(max-width:1050px){main{grid-template-columns:1fr 1fr}.right{grid-column:1/-1}}@media(max-width:680px){main{grid-template-columns:1fr;padding:12px}.right{grid-column:auto}header{padding:14px}.stat{min-width:75px}}
+</style>
+</head>
+<body>
+<header>
+ <div><div class="brand">◈ <span>CYBER</span>LIFE</div><div class="sub">AUTONOMOUS CITY SIMULATOR // BUILD 0.1</div></div>
+ <div class="stats">
+  <div class="stat"><small>Day</small><strong id="day">01</strong></div>
+  <div class="stat"><small>Influence</small><strong id="influence">42</strong></div>
+  <div class="stat"><small>City Mood</small><strong id="mood">68%</strong></div>
+  <div class="stat"><small>Chaos</small><strong id="chaos">12%</strong></div>
+ </div>
+</header>
+<main>
+<section class="panel">
+ <div class="panelhead"><h2>01 / Neon City</h2><span class="tag" id="weather">ACID RAIN</span></div>
+ <div class="city">
+  <div class="neon">NIGHT CITY / SECTOR 07</div>
+  <div class="skyline" aria-hidden="true">
+   <div class="building" style="height:44%"></div><div class="building" style="height:72%"></div><div class="building" style="height:56%"></div><div class="building" style="height:92%"></div><div class="building" style="height:64%"></div><div class="building" style="height:79%"></div>
+  </div>
+  <div class="districts"><span class="district">✦ DOWNTOWN</span><span class="district">⌁ UNDERCITY</span><span class="district">▥ MARKET</span><span class="district">◉ SKY TOWER</span></div>
+ </div>
+ <div class="inner">
+  <div class="panelhead" style="padding:0 0 12px;border:0"><h2>Citizens / <span id="npc-count">6</span> Active</h2><span class="tag">LIVE SIM</span></div>
+  <div class="npcs" id="npcs"></div>
+ </div>
+ <div class="hint">每个居民都有自己的钱、情绪、关系与小算盘。你不是玩家——你是这座城市的变量。</div>
+</section>
+<section class="panel">
+ <div class="panelhead"><h2>02 / God Mode</h2><span class="tag">CHOOSE YOUR CHAOS</span></div>
+ <div class="inner">
+  <p style="color:var(--muted);font-size:12px;margin:0 0 14px">花费影响力干预居民生活。每次推进一天，他们都会自行工作、社交、赚钱，并引发新的事件。</p>
+  <div class="actions">
+   <button onclick="act('grant')"><b>💸 发一笔横财</b><small>随机居民 +$180 · 花费 8 影响力</small></button>
+   <button onclick="act('romance')"><b>💘 强行牵红线</b><small>撮合两人关系 · 花费 10 影响力</small></button>
+   <button onclick="act('career')"><b>🚀 一夜爆红</b><small>随机居民收入飙升 · 花费 12 影响力</small></button>
+   <button onclick="act('rumor')"><b>🕵️ 散播神秘传闻</b><small>城市混乱上升 · 花费 5 影响力</small></button>
+   <button onclick="act('festival')"><b>🎉 举办街头派对</b><small>提升全城情绪 · 花费 14 影响力</small></button>
+   <button onclick="act('hack')"><b>🧠 黑入城市系统</b><small>获得影响力，可能触发事故</small></button>
+  </div>
+ </div>
+ <div class="panelhead"><h2>03 / Sim Control</h2><span class="tag" id="status">SYSTEM ONLINE</span></div>
+ <div class="inner">
+  <button style="width:100%;padding:14px;font-weight:800;letter-spacing:.08em" onclick="nextDay()">▶ 推进一天 / RUN NEXT DAY</button>
+  <div style="display:flex;gap:8px;margin-top:9px"><button style="flex:1" onclick="saveGame()">💾 保存进度</button><button style="flex:1" onclick="resetGame()">↻ 重启模拟</button></div>
+ </div>
+ <div class="hint">目标：活过 30 天，让城市成为乌托邦——或者看着它优雅地爆炸。</div>
+</section>
+<section class="panel right">
+ <div class="panelhead"><h2>04 / City Feed</h2><span class="tag">LIVE EVENTS</span></div>
+ <div class="inner"><div class="feed" id="feed"></div></div>
+ <div class="panelhead"><h2>05 / Your Legacy</h2><span class="tag">DASHBOARD</span></div>
+ <div class="inner">
+  <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:var(--muted);font-size:12px">城市繁荣度</span><b id="prosperity">54%</b></div><div class="meter"><span id="prosperity-bar" style="width:54%"></span></div>
+  <div style="display:flex;justify-content:space-between;margin:16px 0 10px"><span style="color:var(--muted);font-size:12px">居民幸福感</span><b id="happiness">68%</b></div><div class="meter"><span id="happiness-bar" style="width:68%"></span></div>
+  <p id="legacy" style="font-size:12px;color:var(--muted);margin:16px 0 0">你的故事还没开始。先做一件会改变某个人命运的事。</p>
+ </div>
+ <div class="hint">试玩版采用本地规则模拟，不需要 API Key，也不会向外发送数据。</div>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const initialCitizens=[
+ {name:"林夜",job:"地下城快递员",emoji:"🛵",money:260,mood:71,skill:62,rel:"秘密暗恋苏米"},
+ {name:"苏米",job:"独立音乐人",emoji:"🎧",money:410,mood:83,skill:79,rel:"正在寻找灵感"},
+ {name:"K-17",job:"维修型仿生人",emoji:"🤖",money:120,mood:49,skill:91,rel:"怀疑自己有了意识"},
+ {name:"陈老板",job:"黑市情报商",emoji:"🕶️",money:1200,mood:54,skill:74,rel:"想扩大地下生意"},
+ {name:"艾拉",job:"街头医生",emoji:"🩺",money:570,mood:76,skill:86,rel:"偷偷免费救治穷人"},
+ {name:"阿哲",job:"失业前游戏主播",emoji:"🎮",money:85,mood:61,skill:58,rel:"准备最后一次直播"}
+];
+let state={day:1,influence:42,mood:68,chaos:12,prosperity:54,citizens:structuredClone(initialCitizens),events:[],romances:0,actions:0};
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function log(title,body,chaos=false){state.events.unshift({day:state.day,title,body,chaos});state.events=state.events.slice(0,35);renderFeed()}
+function renderCitizens(){$("npcs").innerHTML=state.citizens.map((c,i)=>`<div class="npc"><div class="avatar">${c.emoji}</div><div><h3>${c.name}</h3><p>${c.job} · ${c.rel}</p><div class="meter"><span style="width:${c.mood}%;background:${c.mood<40?'var(--pink)':'var(--cyan)'}"></span></div></div><div class="money">$${c.money}</div></div>`).join("")}
+function renderFeed(){$("feed").innerHTML=state.events.map(e=>`<div class="event ${e.chaos?'chaos':''}"><small>DAY ${String(e.day).padStart(2,'0')} · ${e.chaos?'⚠ ANOMALY':'◉ CITY LOG'}</small><b>${e.title}</b><div>${e.body}</div></div>`).join("")||'<p style="color:var(--muted)">暂无消息。城市在等待你的第一道指令。</p>'}
+function render(){renderCitizens();renderFeed();$("day").textContent=String(state.day).padStart(2,"0");$("influence").textContent=state.influence;$("mood").textContent=state.mood+"%";$("chaos").textContent=state.chaos+"%";$("prosperity").textContent=state.prosperity+"%";$("prosperity-bar").style.width=state.prosperity+"%";$("happiness").textContent=state.mood+"%";$("happiness-bar").style.width=state.mood+"%";$("weather").textContent=pick(["ACID RAIN","NEON FOG","CLEAR SKY","DATA STORM","NIGHT MARKET"]);$("npc-count").textContent=state.citizens.length;
+$("legacy").textContent=state.day<5?"你的故事还没开始。先做一件会改变某个人命运的事。":state.mood>75?"这座城市开始相信奇迹——你的名字在霓虹灯下流传。":state.chaos>60?"地下频道称你为「混乱之神」。城市随时可能失控。":"你的传说正在形成。每一次干预都会留下痕迹。"}
+function toast(s){$("toast").textContent=s;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2100)}
+function act(type){let cost={grant:8,romance:10,career:12,rumor:5,festival:14,hack:0}[type];if(state.influence<cost){toast("影响力不足！先推进一天或尝试黑入系统。");return}state.influence-=cost;state.actions++;let c=pick(state.citizens),other=pick(state.citizens.filter(x=>x!==c));
+if(type==="grant"){c.money+=180;c.mood=Math.min(100,c.mood+8);state.prosperity=Math.min(100,state.prosperity+3);log("天降横财","一笔匿名转账让"+c.name+"的人生出现转机。")}
+if(type==="romance"){c.rel="和"+other.name+"的关系变得微妙";other.rel="和"+c.name+"有了秘密";c.mood=Math.min(100,c.mood+10);other.mood=Math.min(100,other.mood+10);state.romances++;log("命运的红线",""+c.name+"与"+other.name+"在雨夜相遇。火花是真的，还是算法安排的？")}
+if(type==="career"){c.skill=Math.min(100,c.skill+8);c.money+=260;c.mood=Math.min(100,c.mood+12);state.prosperity=Math.min(100,state.prosperity+5);log("一夜爆红",""+c.name+"意外走红，收入暴涨。老朋友开始嫉妒了。")}
+if(type==="rumor"){state.chaos=Math.min(100,state.chaos+12);state.mood=Math.max(0,state.mood-3);log("匿名传闻引爆全城","有人声称市长是仿生人。没人知道源头。",true)}
+if(type==="festival"){state.mood=Math.min(100,state.mood+12);state.chaos=Math.max(0,state.chaos-5);state.citizens.forEach(x=>x.mood=Math.min(100,x.mood+5));log("霓虹街头派对","音乐、灯光和免费的面条让所有人暂时忘记了债务。")}
+if(type==="hack"){state.influence+=Math.floor(Math.random()*13)+7;if(Math.random()<.45){state.chaos=Math.min(100,state.chaos+8);log("防火墙反击","你黑进了城市系统，但留下了痕迹。安全无人机正在追踪信号。",true)}else{state.prosperity=Math.min(100,state.prosperity+2);log("系统漏洞已利用","你复制了一部分城市算力。影响力上升。")}}
+render();toast("命运已被改写。")}
+function nextDay(){state.day++;state.influence=Math.min(100,state.influence+5);state.citizens.forEach(c=>{let wage=Math.floor(12+Math.random()*c.skill*.65);c.money+=wage;c.mood=Math.max(5,Math.min(100,c.mood+Math.floor(Math.random()*13)-6));if(Math.random()<.28)c.rel=pick(["计划跳槽","有个秘密没告诉任何人","正在攒钱离开这座城","最近总梦见海","觉得有人在监视自己","想和旧友和好","准备做一件疯狂的事"])});
+let r=Math.random();if(r<.24){let c=pick(state.citizens);let e=pick([{t:"工作机会",b:c.name+"拿到一份高薪兼职。",f:()=>{c.money+=90;state.prosperity+=2}},{t:"钱包被偷",b:c.name+"在地铁站丢了钱包。",f:()=>{c.money=Math.max(0,c.money-60);c.mood-=8}},{t:"秘密曝光",b:"关于"+c.name+"的秘密突然在网上流传。",f:()=>{state.chaos+=7;c.mood-=10}},{t:"善意传染",b:c.name+"帮助了一位陌生人，这件事被拍了下来。",f:()=>{state.mood+=3;c.mood+=8}}]);e.f();log(e.t,e.b,state.chaos>55)}
+else if(r<.42){state.chaos=Math.max(0,Math.min(100,state.chaos+Math.floor(Math.random()*13)-5));log("城市日常","夜市照常营业，广告无人观看，某个角落却正在发生大事。")}
+if(state.chaos>70&&Math.random()<.4){state.mood=Math.max(0,state.mood-8);log("城市级故障","交通系统瘫痪，居民开始质疑你的治理能力。",true)}
+state.mood=Math.max(0,Math.min(100,Math.round(state.citizens.reduce((a,c)=>a+c.mood,0)/state.citizens.length)));state.prosperity=Math.max(0,Math.min(100,Math.round(state.citizens.reduce((a,c)=>a+Math.min(100,c.money/12),0)/state.citizens.length)));if(state.day%5===0)log("阶段报告","第"+state.day+"天结束：你干预了"+state.actions+"次，牵起"+state.romances+"段关系。");if(state.day>=30){$("status").textContent="SIM COMPLETE";log("模拟结束","30天过去了。城市的未来由你的选择塑造。")}render();toast("第 "+state.day+" 天：城市继续自行运转。")}
+function saveGame(){localStorage.setItem("cyberlife-save",JSON.stringify(state));toast("进度已保存在这台设备上。")}
+function resetGame(){if(!confirm("确定重启？当前进度会被覆盖。"))return;state={day:1,influence:42,mood:68,chaos:12,prosperity:54,citizens:structuredClone(initialCitizens),events:[],romances:0,actions:0};log("模拟启动","欢迎来到第七区。这里的每个人都以为自己是主角。");render();toast("新的时间线已启动。")}
+const saved=localStorage.getItem("cyberlife-save");if(saved){try{state=JSON.parse(saved)}catch(e){}}
+if(!state.events.length)log("模拟启动","欢迎来到第七区。这里的每个人都以为自己是主角。");
+render();
+</script>
+</body></html>
